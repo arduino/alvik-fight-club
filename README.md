@@ -6,6 +6,13 @@ Requirements:
   - 1 Esp32 WROOM 32D (ohter board can be used but currenlty I tested using this one)
   - 1 joystick (like `https://www.rseonlineshop.co.za/collections/arduino-accessories/products/joystick-for-arduino-5v`)
 
+Wiring joystick
+  - `GND` to `GND` of esp32
+  - `+5v` to `3v3` of esp 32
+  - `VRx` to pin `35` of Esp32
+  - `VRy` to pin `34` of Esp32
+  -
+
 ### Install MicroPython on `ESP32 WROOM 32D`
 - Install micropython on the board `ESP32 WROOM 32D` (the controller board) I followed this [guide](https://micropython.org/download/ESP32_GENERIC/).
   - Download the [esptool](https://github.com/espressif/esptool)
