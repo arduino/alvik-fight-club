@@ -1,5 +1,6 @@
 import network
 import espnow
+import struct
 
 from machine import Pin, ADC
 from time import sleep
@@ -13,8 +14,7 @@ sta.disconnect()      # For ESP8266
 e = espnow.ESPNow()
 e.active(True)
 
-# peer = b'\x74\x4b\xbd\xa2\x08\x74'   # MAC address of peer's wifi interface
-peer = b'\xff\xff\xff\xff\xff\xff'
+peer = b'\xff\xff\xff\xff\xff\xff' # TODO: use MAC of alvik, not the broadcast
 try:
   e.add_peer(peer)      # Must add_peer() before send()
 except OSError as exp:
@@ -22,13 +22,18 @@ except OSError as exp:
 
 
 px = ADC(Pin(34))
-px.atten(ADC.ATTN_11DB)  #Full range: 3.3v
+px.atten(ADC.ATTN_11DB)       #Full range: 3.3v
 py = ADC(Pin(35))
 py.atten(ADC.ATTN_11DB)
 
 while True:
-  x = px.read()
-  y = py.read()
-  print("x:", x, "y:", y)
+  x = px.read() & 0xFFFF  # Ensure x is within 2 bytes range (0-65535)
+  y = py.read() & 0xFFFF  # Ensure y is within 2 bytes range (0-65535)
+
+  # Protocol definition: 6 bytes (1 byte for msg type, 2 bytes first argument, 2 bytes second argument)
+  msg_type = 1
+  message = struct.pack('BHH',msg_type, x, y)
+  unpacked_message = struct.unpack('BHH', message)
+  e.send(peer, message, True)
+
   sleep(0.1)
-  e.send(peer, str(x), True)

@@ -1,5 +1,6 @@
 import network
 import espnow
+import struct
 
 from arduino_alvik import ArduinoAlvik
 
@@ -8,7 +9,7 @@ sta = network.WLAN(network.STA_IF)
 sta.active(True)
 sta.disconnect()   # Because ESP8266 auto-connects to last Access Point
 
-print(sta.config('mac').hex())
+# print(sta.config('mac').hex())
 
 e = espnow.ESPNow()
 e.active(True)
@@ -21,12 +22,25 @@ a = ArduinoAlvik()
 a.begin()
 
 while True:
-    print("start receiving...")
     host, msg = e.recv()
-    if msg:             # msg == None if timeout in recv()
-        v = int(msg)
-        m = map_value(v, 0, 4095, -10, 10) # from 10mm/s to 0
-        print("value:", v, "m:", m)
-        a.drive(m, 0)
+    if msg:
+        if len(msg) < 6: # discard garbage
+            continue
+        unpacked_message = struct.unpack('BHH', msg)
+
+        msg_type = unpacked_message[0]
+        x = unpacked_message[1]
+        y = unpacked_message[2]
+
+        if int(msg_type) == 1:
+          x, y = int(x), int(y)
+          if 1750<=x<=1900: #hack: in normal position the joystick read 1700-1800 instead of 4095/2 = 2047
+            x = 2047
+          if 1750<=y<=1900: #hack: in normal position the joystick read 1700-1800 instead of 4095/2 = 2047
+            y = 2047
+          xm = map_value(x, 0, 4095, -100, 100) # rotation
+          ym = map_value(y, 0, 4095, -50, 50) # bw, fw : from 10mm/s to 0
+          print("moving", "x:", x, "y:", y, "mx", xm, "my", ym)
+          a.drive(ym, -xm)
     else:
       print("timeout on receive")
