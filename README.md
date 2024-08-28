@@ -25,6 +25,10 @@ The new version of the Alvik Fight Club remote control consists of the a 3D prin
 | 1 | Small USB battery pack | ? |
 | 1 | 3D printed body | |
 
+<p align="center">
+  <img src="cad/remote-control/remote-control.jpg" width="60%">
+</p>
+
 ### Install MicroPython on `ESP32 WROOM 32D`
 - Install micropython on the board `ESP32 WROOM 32D` (the controller board) I followed this [guide](https://micropython.org/download/ESP32_GENERIC/).
   - Download the [esptool](https://github.com/espressif/esptool)
