@@ -3,14 +3,6 @@
 Requirements:
   - Arduino Lab for [micropython](https://labs.arduino.cc/en/labs/micropython)
   - 1 Alvik
-  - 1 Esp32 WROOM 32D (ohter board can be used but currenlty I tested using this one)
-  - 1 joystick (like `https://www.rseonlineshop.co.za/collections/arduino-accessories/products/joystick-for-arduino-5v`)
-
-Wiring joystick
-  - `GND` to `GND` of esp32
-  - `+5v` to `3v3` of esp 32
-  - `VRx` to pin `35` of Esp32
-  - `VRy` to pin `34` of Esp32
 
 ### Arduino Nano ESP32 and Modulino based remote control
 The new version of the Alvik Fight Club remote control consists of the a 3D printed base [STL-file](cad/remote-control/remote-control.stl) and the following components:
