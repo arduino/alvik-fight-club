@@ -1,11 +1,18 @@
 # alvik-fight-club
 
-Requirements:
-  - Arduino Lab for [micropython](https://labs.arduino.cc/en/labs/micropython)
-  - 1 Alvik
+>
+> The first rule about the Alvik fight club:
+> Don’t talk about the Alvik fight club.
+>
 
-### Arduino Nano ESP32 and Modulino based remote control
-The new version of the Alvik Fight Club remote control consists of the a 3D printed base [STL-file](cad/remote-control/remote-control.stl) and the following components:
+
+The project is composed by two components:
+ - a remote controller
+ - an Alvik robot
+
+##  Remote controller
+The remove controller is based on  `Arduino Nano ESP32` and two `Modulino`.
+The remote control consists of the a 3D printed base [STL-file](cad/remote-control/remote-control.stl) and the following components:
 |   | Description | Amount / € |
 |---|---|:-:|
 | 1 | [Arduino Nano ESP32 w/ headers](https://store.arduino.cc/products/nano-esp32-with-headers) | 23,20 € (Arduino) |
@@ -21,16 +28,20 @@ The new version of the Alvik Fight Club remote control consists of the a 3D prin
   <img src="cad/remote-control/remote-control.jpg" width="60%">
 </p>
 
-### Install MicroPython on `ESP32 WROOM 32D`
-- Install micropython on the board `ESP32 WROOM 32D` (the controller board) I followed this [guide](https://micropython.org/download/ESP32_GENERIC/).
-  - Download the [esptool](https://github.com/espressif/esptool)
-  - Erase the flash: `esptool --chip esp32 --port /dev/ttyUSB1 erase_flash `
-  - Download the firmware (like `ESP32_GENERIC-20240602-v1.23.0`)
-  - Install the fw on the board `esptool --chip esp32 --port /dev/ttyUSB1 --baud 460800 write_flash -z 0x1000 ./ESP32_GENERIC-20240602-v1.23.0.bin`
+## Alvik robot
+The robot is an Alvik  requires the following components:
+|   | Description | Amount / € |
+|---|---|:-:|
+| 1 | [Arduino Alvik](https://www.arduino.cc/education/arduino-alvik/) | 158,60 € (Arduino) |
+| 1 | Modulino Pixel | Arduino |
+| 1 | Modulino Buzzer | Arduino |
+| 2 | Servo motor (180 degree) | ~8€ |
+| 1 | 3D lift mechanism | |
 
-Alternative: use the [MicroPython Installer](https://labs.arduino.cc/en/labs/micropython-installern) but I didn't test with the board Esp32 32D.
+<p align="center">
+  <img src="img/robot.jpg" width="60%">
+</p>
 
 ### Local dev
-- Open `Arduino Lab for Micropython `
-- Connect the alvik, copy the `robot/main.py` into the `main.py` in the  board
-- Connect the `Esp32 WROOM 32D`, copy the `controller/main.py` into the `main.py` in the board
+Requirements:
+  - [Arduino Lab for Micropython](https://labs.arduino.cc/en/labs/micropython)
