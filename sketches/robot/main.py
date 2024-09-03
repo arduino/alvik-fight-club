@@ -35,8 +35,8 @@ pixels = ModulinoPixels()
 
 def receiveAndExecuteFromEspNow():
     host, msg = e.recv(
-            timeout_ms=0
-        )  # TODO: See ESPNow.irecv() for a memory-friendly alternative.
+        timeout_ms=0
+    )  # TODO: See ESPNow.irecv() for a memory-friendly alternative.
     if msg is None:
         return
     if len(msg) < 6:  # discard garbage
@@ -53,6 +53,7 @@ def receiveAndExecuteFromEspNow():
         a.drive(0, 40)
     elif int(msg_type) == TURN_RIGHT:
         a.drive(0, -40)
+
 
 def lostLifeAnimation():
     a.drive(0, 0)
@@ -76,6 +77,7 @@ def lostLifeAnimation():
     pixels.set_range_color(0, LIVES - 1, color, 70)
     pixels.show()
 
+
 def checkModulinoPixels():
     ok_pixel = False
     retries = 3
@@ -89,6 +91,22 @@ def checkModulinoPixels():
             sleep_ms(500)
     return ok_pixel
 
+
+def showEndAnimation():
+    for j in range(0, 3):
+        for i in range(0, 8):
+            pixels.clear_all()
+            pixels.set_rgb(i, 255, 0, 0, 100)
+            pixels.show()
+            sleep_ms(50)
+
+        for i in range(7, -1, -1):
+            pixels.clear_all()
+            pixels.set_rgb(i, 255, 0, 0, 100)
+            pixels.show()
+            sleep_ms(50)
+
+
 STATE_INIT = 0
 STATE_PLAY = 1
 STATE_LOOSE_LIFE = 2
@@ -99,7 +117,7 @@ state = STATE_INIT
 
 while True:
     if state == STATE_INIT:
-        if(checkModulinoPixels()):
+        if checkModulinoPixels():
             state = STATE_PLAY
         else:
             state = STATE_ERROR
@@ -111,8 +129,8 @@ while True:
 
         if color == "BLACK":
             LIVES -= 1
+            lostLifeAnimation()
             if LIVES > 0:
-                lostLifeAnimation()
                 state = STATE_LOOSE_LIFE
             elif LIVES == 0:
                 state = STATE_END
@@ -120,7 +138,8 @@ while True:
         elif color == "RED":
             # random spin
             a.rotate(
-                random.choice([30.0, 45.0, 90.0, 130.0, 150.0, 180.0, 275.0, 360.0]), "deg"
+                random.choice([30.0, 45.0, 90.0, 130.0, 150.0, 180.0, 275.0, 360.0]),
+                "deg",
             )
 
         receiveAndExecuteFromEspNow()
@@ -133,10 +152,15 @@ while True:
         if a.get_color_label() is not "BLACK":
             state = STATE_PLAY
         else:
-             state = STATE_LOOSE_LIFE
+            state = STATE_LOOSE_LIFE
+
+    elif state == STATE_END:
+        a.drive(0, 0)
+        showEndAnimation()
 
     elif state == STATE_ERROR:
-         while True:
+        a.drive(0, 0)
+        while True:
             # Blink the LEDs forever
             a.left_led.set_color(1, 0, 0)
             a.right_led.set_color(1, 0, 0)
