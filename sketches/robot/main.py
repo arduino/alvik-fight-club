@@ -31,15 +31,40 @@ a = ArduinoAlvik()
 a.begin()
 
 pixels = ModulinoPixels()
-if not pixels.connected:
-    a.left_led.set_color(1, 0, 0)
-    a.right_led.set_color(1, 0, 0)
-    exit()
 
 
-def updateHealthLeds():
-    if LIVES < 0:
+def receiveAndExecuteFromEspNow():
+    host, msg = e.recv(
+            timeout_ms=0
+        )  # TODO: See ESPNow.irecv() for a memory-friendly alternative.
+    if msg is None:
         return
+    if len(msg) < 6:  # discard garbage
+        return
+    unpacked_message = struct.unpack("BHH", msg)
+    msg_type = unpacked_message[0]
+    if int(msg_type) == STOP:
+        a.drive(0, 0)
+    elif int(msg_type) == GO_FORWARD:
+        a.drive(VELOCITY, 0)
+    elif int(msg_type) == GO_BACKWARD:
+        a.drive(-VELOCITY, 0)
+    elif int(msg_type) == TURN_LEFT:
+        a.drive(0, 40)
+    elif int(msg_type) == TURN_RIGHT:
+        a.drive(0, -40)
+
+def lostLifeAnimation():
+    a.drive(0, 0)
+
+    for i in range(3):
+        a.left_led.set_color(1, 0, 0)
+        a.right_led.set_color(1, 0, 0)
+        sleep_ms(200)
+        a.left_led.set_color(0, 0, 0)
+        a.right_led.set_color(0, 0, 0)
+        sleep_ms(200)
+
     pixels.clear_all()
     color = ModulinoColor.RED
     if LIVES >= 6:
@@ -51,52 +76,73 @@ def updateHealthLeds():
     pixels.set_range_color(0, LIVES - 1, color, 70)
     pixels.show()
 
+def checkModulinoPixels():
+    ok_pixel = False
+    retries = 3
+    for x in range(retries):
+        if pixels.connected:
+            ok_pixel = True
+            break
+        else:
+            a.left_led.set_color(1, 0, 0)
+            a.right_led.set_color(1, 0, 0)
+            sleep_ms(500)
+    return ok_pixel
 
-def lostLifeAnimation():
-    a.drive(0, 0)
-    for i in range(3):
-        a.left_led.set_color(1, 0, 0)
-        a.right_led.set_color(1, 0, 0)
-        sleep_ms(200)
-        a.left_led.set_color(0, 0, 0)
-        a.right_led.set_color(0, 0, 0)
-        sleep_ms(200)
+STATE_INIT = 0
+STATE_PLAY = 1
+STATE_LOOSE_LIFE = 2
+STATE_END = 3
+STATE_ERROR = -1
 
+state = STATE_INIT
 
 while True:
+    if state == STATE_INIT:
+        if(checkModulinoPixels()):
+            state = STATE_PLAY
+        else:
+            state = STATE_ERROR
 
-    host, msg = e.recv(
-        timeout_ms=0
-    )  # TODO: See ESPNow.irecv() for a memory-friendly alternative.
-    if msg:
-        if len(msg) < 6:  # discard garbage
-            continue
-        unpacked_message = struct.unpack("BHH", msg)
+    elif state == STATE_PLAY:
+        print("PLAY")
+        color = a.get_color_label()
+        print(color)
 
-        msg_type = unpacked_message[0]
-        if int(msg_type) == STOP:
-            a.drive(0, 0)
-        elif int(msg_type) == GO_FORWARD:
-            a.drive(VELOCITY, 0)
-        elif int(msg_type) == GO_BACKWARD:
-            a.drive(-VELOCITY, 0)
-        elif int(msg_type) == TURN_LEFT:
-            a.drive(0, 40)
-        elif int(msg_type) == TURN_RIGHT:
-            a.drive(0, -40)
-
-    updateHealthLeds()  # TODO: update health only when lives changes.
-
-    color = a.get_color_label()
-    print(color)
-    if color == "BLACK":
-        if LIVES > 0:
+        if color == "BLACK":
             LIVES -= 1
-            lostLifeAnimation()
-    elif color == "RED":
-        # random spin
-        a.rotate(
-            random.choice([30.0, 45.0, 90.0, 130.0, 150.0, 180.0, 275.0, 360.0]), "deg"
-        )
+            if LIVES > 0:
+                lostLifeAnimation()
+                state = STATE_LOOSE_LIFE
+            elif LIVES == 0:
+                state = STATE_END
+
+        elif color == "RED":
+            # random spin
+            a.rotate(
+                random.choice([30.0, 45.0, 90.0, 130.0, 150.0, 180.0, 275.0, 360.0]), "deg"
+            )
+
+        receiveAndExecuteFromEspNow()
+
+    elif state == STATE_LOOSE_LIFE:
+        print("LOOSE LIFE")
+
+        receiveAndExecuteFromEspNow()
+
+        if a.get_color_label() is not "BLACK":
+            state = STATE_PLAY
+        else:
+             state = STATE_LOOSE_LIFE
+
+    elif state == STATE_ERROR:
+         while True:
+            # Blink the LEDs forever
+            a.left_led.set_color(1, 0, 0)
+            a.right_led.set_color(1, 0, 0)
+            sleep_ms(200)
+            a.left_led.set_color(0, 0, 0)
+            a.right_led.set_color(0, 0, 0)
+            sleep_ms(200)
 
     sleep_ms(100)
