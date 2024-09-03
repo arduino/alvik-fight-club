@@ -1,8 +1,10 @@
 import network
 import espnow
 import struct
+import random
 
 from arduino_alvik import ArduinoAlvik
+from time import sleep_ms
 
 try:
     from modulino import ModulinoPixels, ModulinoColor
@@ -29,12 +31,13 @@ a = ArduinoAlvik()
 a.begin()
 
 pixels = ModulinoPixels()
+if not pixels.connected:
+    a.left_led.set_color(1, 0, 0)
+    a.right_led.set_color(1, 0, 0)
+    exit()
 
 
 def updateHealthLeds():
-    if not pixels.connected:
-        print("🤷 No pixel modulino found")
-        return
     if LIVES < 0:
         return
     pixels.clear_all()
@@ -49,8 +52,19 @@ def updateHealthLeds():
     pixels.show()
 
 
+def lostLifeAnimation():
+    a.drive(0, 0)
+    for i in range(3):
+        a.left_led.set_color(1, 0, 0)
+        a.right_led.set_color(1, 0, 0)
+        sleep_ms(200)
+        a.left_led.set_color(0, 0, 0)
+        a.right_led.set_color(0, 0, 0)
+        sleep_ms(200)
+
+
 while True:
-    updateHealthLeds()  # TODO: update health only when lives changes.
+
     host, msg = e.recv(
         timeout_ms=0
     )  # TODO: See ESPNow.irecv() for a memory-friendly alternative.
@@ -70,3 +84,19 @@ while True:
             a.drive(0, 40)
         elif int(msg_type) == TURN_RIGHT:
             a.drive(0, -40)
+
+    updateHealthLeds()  # TODO: update health only when lives changes.
+
+    color = a.get_color_label()
+    print(color)
+    if color == "BLACK":
+        if LIVES > 0:
+            LIVES -= 1
+            lostLifeAnimation()
+    elif color == "RED":
+        # random spin
+        a.rotate(
+            random.choice([30.0, 45.0, 90.0, 130.0, 150.0, 180.0, 275.0, 360.0]), "deg"
+        )
+
+    sleep_ms(100)
