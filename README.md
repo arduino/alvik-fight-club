@@ -10,7 +10,30 @@ The project is composed by two components:
  - a remote controller
  - an Alvik robot
 
-##  Remote controller
+
+## Setup
+
+- `make init` to install tools on local pc
+
+### Configure the Alvik robot
+1. Connect the Alvik
+2. `make robot-install` to upload the libraries to the alvik
+3. `make robot-get-mac` to get the `MAC` address and print it into the consle.
+4. Copy the printed MAC address
+5. `make robot-upload` to upload the code into the alvik
+
+### Configure the controller
+1. Open the `sketc/controller/main.py` file and paste the mac address of the alvik in the `PEER_ROBOT` variable
+2. Connect the controller
+3. Install Micropython
+   - Download the [Micropython Installer](https://labs.arduino.cc/en/labs/micropython-installer)
+   - Open the installer and clik  `Install Micropython` button
+4. `make controller-install` to install libraries into the controller
+5. `make controller-upload robot-mac=<PUT_THE_ALVIK_MAC_HERE>` to upload the code and setting the MAC sddress obtained in robot Step 4. Example: `make controller-upload robot-mac=74:4d:bd:a0:49:e8`
+
+## Techninal info
+
+###  Remote controller
 The remove controller is based on  `Arduino Nano ESP32` and two `Modulino`.
 The remote control consists of the a 3D printed base [STL-file](cad/remote-control/remote-control.stl) and the following components:
 |   | Description | Amount / € |
@@ -28,7 +51,7 @@ The remote control consists of the a 3D printed base [STL-file](cad/remote-contr
   <img src="cad/remote-control/remote-control.jpg" width="60%">
 </p>
 
-## Alvik robot
+### Alvik robot
 The robot is an Alvik  requires the following components:
 |   | Description | Amount / € |
 |---|---|:-:|
@@ -41,7 +64,3 @@ The robot is an Alvik  requires the following components:
 <p align="center">
   <img src="img/robot.jpg" width="60%">
 </p>
-
-### Local dev
-Requirements:
-  - [Arduino Lab for Micropython](https://labs.arduino.cc/en/labs/micropython)

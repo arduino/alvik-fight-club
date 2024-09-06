@@ -2,6 +2,7 @@ import network
 import espnow
 import struct
 import random
+import sys
 
 from arduino_alvik import ArduinoAlvik
 from time import sleep_ms
