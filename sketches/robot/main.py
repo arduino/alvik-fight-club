@@ -21,6 +21,7 @@ GO_FORWARD = 1
 GO_BACKWARD = 2
 TURN_LEFT = 3
 TURN_RIGHT = 4
+LIFT = 5
 
 # A WLAN interface must be active to send()/recv()
 sta = network.WLAN(network.STA_IF)
@@ -54,6 +55,24 @@ def receiveAndExecuteFromEspNow():
         a.drive(0, 40)
     elif int(msg_type) == TURN_RIGHT:
         a.drive(0, -40)
+    elif int(msg_type) == LIFT:
+        liftArm()
+
+
+def liftArm():
+    a.set_servo_positions(180, 0)
+    sleep_ms(100)
+    a.set_servo_positions(135, 45)
+    sleep_ms(100)
+    a.set_servo_positions(120, 60)
+    sleep_ms(100)
+    a.set_servo_positions(90, 90)
+    sleep_ms(100)
+    a.set_servo_positions(120, 60)
+    sleep_ms(100)
+    a.set_servo_positions(135, 45)
+    sleep_ms(100)
+    a.set_servo_positions(180, 0)
 
 
 def lostLifeAnimation():
