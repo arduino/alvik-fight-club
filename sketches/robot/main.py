@@ -32,7 +32,7 @@ e.active(True)
 a = ArduinoAlvik()
 a.begin()
 
-pixels = ModulinoPixels()
+pixels = ModulinoPixels(a.i2c)
 
 
 def receiveAndExecuteFromEspNow():

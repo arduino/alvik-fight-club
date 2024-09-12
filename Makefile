@@ -30,3 +30,27 @@ robot-get-mac:
 robot-upload:
 	mpremote fs cp  ./sketches/robot/main.py :main.py
 	mpremote reset
+
+.PHONY: robot-patch-firmware
+robot-patch-firmware:
+	# copy patched firmware of https://github.com/arduino-libraries/Arduino_AlvikCarrier/ into robot
+	mpremote fs cp ./utilities/firmware_dev_1_0_3.bin :firmware_dev_1_0_3.bin
+	# instal on STM32 using flash_firmware.py script
+	mpremote run ./utilities/flash_firmware.py
+	mpremote fs rm firmware_dev_1_0_3.bin
+
+.PHONY: robot-patch-mpy
+robot-patch-mpy:
+	rm -rf arduino-alvik-mpy
+	git clone git@github.com:arduino/arduino-alvik-mpy.git
+	cd arduino-alvik-mpy && git checkout 48db6a3d26c798b4be06fa6e71de005901f716fc
+
+	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/__init__.py :lib/arduino_alvik/__init__.py
+	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/arduino_alvik.py :lib/arduino_alvik/arduino_alvik.py
+	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/constants.py :lib/arduino_alvik/constants.py
+	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/conversions.py :lib/arduino_alvik/conversions.py
+	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/pinout_definitions.py :lib/arduino_alvik/pinout_definitions.py
+	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/robot_definitions.py :lib/arduino_alvik/robot_definitions.py
+	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/stm32_flash.py :lib/arduino_alvik/stm32_flash.py
+	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/uart.py :lib/arduino_alvik/uart.py
+	mpremote reset
