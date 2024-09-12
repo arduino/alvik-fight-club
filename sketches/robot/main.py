@@ -48,9 +48,9 @@ def receiveAndExecuteFromEspNow():
     if int(msg_type) == STOP:
         a.drive(0, 0)
     elif int(msg_type) == GO_FORWARD:
-        a.drive(VELOCITY, 0)
-    elif int(msg_type) == GO_BACKWARD:
         a.drive(-VELOCITY, 0)
+    elif int(msg_type) == GO_BACKWARD:
+        a.drive(VELOCITY, 0)
     elif int(msg_type) == TURN_LEFT:
         a.drive(0, 40)
     elif int(msg_type) == TURN_RIGHT:
