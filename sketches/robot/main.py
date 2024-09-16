@@ -14,7 +14,9 @@ except ImportError as e:
     sys.exit(-1)
 
 LIVES = 8
-VELOCITY = 50  # mm/s TODO: set the correct value
+VELOCITY = 13  # cm/s (max is 13cm/s)
+ANGULAR_VELOCITY = 320  # (max 320.8988764044944)
+
 
 STOP = 0
 GO_FORWARD = 1
@@ -35,7 +37,10 @@ a.begin()
 pixels = ModulinoPixels(a.i2c)
 
 
+lifState = 0        # 0 = down, 1 = up
+
 def receiveAndExecuteFromEspNow():
+    global lifState
     host, msg = e.recv(
         timeout_ms=0
     )  # TODO: See ESPNow.irecv() for a memory-friendly alternative.
@@ -52,26 +57,37 @@ def receiveAndExecuteFromEspNow():
     elif int(msg_type) == GO_BACKWARD:
         a.drive(VELOCITY, 0)
     elif int(msg_type) == TURN_LEFT:
-        a.drive(0, 40)
+        a.drive(0, ANGULAR_VELOCITY)
     elif int(msg_type) == TURN_RIGHT:
-        a.drive(0, -40)
+        a.drive(0, -ANGULAR_VELOCITY)
     elif int(msg_type) == LIFT:
-        liftArm()
+        if lifState == 0:
+            liftUp()
+            lifState = 1
+        else:
+            liftDown()
+            lifState = 0
 
-
-def liftArm():
+def liftUp():
     a.set_servo_positions(180, 0)
-    sleep_ms(100)
-    a.set_servo_positions(135, 45)
-    sleep_ms(100)
-    a.set_servo_positions(120, 60)
-    sleep_ms(100)
-    a.set_servo_positions(90, 90)
-    sleep_ms(100)
-    a.set_servo_positions(120, 60)
-    sleep_ms(100)
-    a.set_servo_positions(135, 45)
-    sleep_ms(100)
+    sleep_ms(25)
+    a.set_servo_positions(175, 5)
+    sleep_ms(25)
+    a.set_servo_positions(170, 10)
+    sleep_ms(25)
+    a.set_servo_positions(165, 15)
+    sleep_ms(25)
+    a.set_servo_positions(160, 20)
+    sleep_ms(25)
+
+
+def liftDown():
+    a.set_servo_positions(165, 15)
+    sleep_ms(25)
+    a.set_servo_positions(170, 10)
+    sleep_ms(25)
+    a.set_servo_positions(175, 5)
+    sleep_ms(25)
     a.set_servo_positions(180, 0)
 
 
