@@ -18,7 +18,7 @@ The project is composed by two components:
 ### Configure the Alvik robot
 1. Connect the Alvik
 2. `make robot-patch-firmware`: to patch the firmware running on the STM32 (needed to resolve [Issue 10](https://github.com/bcmi-labs/alvik-fight-club/issues/10))
-3.`make robot-patch-mpy`: to install the `dev` branch with of the Arduino-Alvik-mpy (Needed to resolve [Issue 10](https://github.com/bcmi-labs/alvik-fight-club/issues/10))
+3. `make robot-patch-mpy`: to install the `dev` branch with of the Arduino-Alvik-mpy (Needed to resolve [Issue 10](https://github.com/bcmi-labs/alvik-fight-club/issues/10))
 4. `make robot-install` to upload the `Modulino` lib
 5. `make robot-get-mac` to get the `MAC` address and print it into the consle.
 6. Copy the printed MAC address
@@ -27,13 +27,13 @@ The project is composed by two components:
 NOTE: the PATCH steps `2` and `3` are no more necessary when the [Arduino_AlvikCarrier](https://github.com/arduino-libraries/Arduino_AlvikCarrier) and the [Arduino-Alvik-mpy](https://github.com/arduino/arduino-alvik-mpy) are merged to master and release ad an official release.
 
 ### Configure the controller
-1. Open the `sketc/controller/main.py` file and paste the mac address of the alvik in the `PEER_ROBOT` variable
-2. Connect the controller
-3. Install Micropython
+1. Connect the controller
+2. Install Micropython into the controller
    - Download the [Micropython Installer](https://labs.arduino.cc/en/labs/micropython-installer)
    - Open the installer and clik  `Install Micropython` button
 4. `make controller-install` to install libraries into the controller
-5. `make controller-upload robot-mac=<PUT_THE_ALVIK_MAC_HERE>` to upload the code and setting the MAC sddress obtained in robot Step 4. Example: `make controller-upload robot-mac=74:4d:bd:a0:49:e8`
+5. `make controller-upload robot-mac=<PUT_THE_ALVIK_MAC_HERE>` to upload the code and setting the MAC sddress obtained with the `make robot-get-mac` (robot Step 5).
+       Example: `make controller-upload robot-mac=74:4d:bd:a0:49:e8`
 
 ## Techninal info
 
