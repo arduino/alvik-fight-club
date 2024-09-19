@@ -61,9 +61,18 @@ The robot is an Alvik  requires the following components:
 |---|---|:-:|
 | 1 | [Arduino Alvik](https://www.arduino.cc/education/arduino-alvik/) | 158,60 € (Arduino) |
 | 1 | Modulino Pixel | Arduino |
-| 1 | Modulino Buzzer | Arduino |
 | 2 | Servo motor (180 degree) | ~8€ |
-| 1 | 3D lift mechanism | |
+| 2 | Lift arm scoop mount [CAD](cad/robot/lift-arm-scoop.stl) | @aentinger |
+| 2 | Lift arm servo mount [CAD](cad/robot/lift-arm-servo.stl) | @aentinger |
+| 1 | Scoop [CAD](cad/robot/scoop.stl) | @aentinger |
+| 1 | Cover for actual Alvik front [CAD](cad/robot/back-plate.stl) | @aentinger |
+| 1 | Top plate for mounting servos and Modulino [CAD](cad/robot/top-plate.stl) | @aentinger |
+| 2 | Mounting brackets for top plate [CAD](cad/robot/top-plate-holder.stl) | @aentinger |
+| 1 | Zip ties | @aentinger |
+| 2 | Googly eyes | @aentinger |
+| 1 | Bumper sticker | @aentinger |
+| n | M3 metric and cutting screws | @aentinger |
+
 
 <p align="center">
   <img src="img/robot.jpg" width="60%">
