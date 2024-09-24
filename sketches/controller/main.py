@@ -5,7 +5,7 @@ import sys
 
 from modulino import ModulinoKnob, ModulinoButtons
 
-ALVIK_MAC = "74:4d:bd:a0:49:e8"
+ALVIK_MAC = "74:4d:bd:a2:08:74"
 
 sta = network.WLAN(network.STA_IF)  # Or network.AP_IF
 sta.active(True)
@@ -45,27 +45,27 @@ LIFT = 5
 
 
 def stop():
-    e.send(_mac_peer, struct.pack("BHH", STOP), True)
+    e.send(_mac_peer, struct.pack("B", STOP), True)
 
 
 def go_forward():
-    e.send(_mac_peer, struct.pack("BHH", GO_FORWARD), True)
+    e.send(_mac_peer, struct.pack("B", GO_FORWARD), True)
 
 
 def go_backward():
-    e.send(_mac_peer, struct.pack("BHH", GO_BACKWARD), True)
+    e.send(_mac_peer, struct.pack("B", GO_BACKWARD), True)
 
 
 def turn_left():
-    e.send(_mac_peer, struct.pack("BHH", TURN_LEFT), True)
+    e.send(_mac_peer, struct.pack("B", TURN_LEFT), True)
 
 
 def turn_right():
-    e.send(_mac_peer, struct.pack("BHH", TURN_RIGHT), True)
+    e.send(_mac_peer, struct.pack("B", TURN_RIGHT), True)
 
 
 def lift():
-    e.send(_mac_peer, struct.pack("BHH", LIFT), True)
+    e.send(_mac_peer, struct.pack("B", LIFT), True)
 
 
 buttons.on_button_a_press = lambda: go_forward()
@@ -73,8 +73,8 @@ buttons.on_button_b_press = lambda: stop()
 buttons.on_button_c_press = lambda: go_backward()
 
 knob.on_press = lambda: lift()
-knob.on_rotate_clockwise = lambda steps, value: turn_left()
-knob.on_rotate_counter_clockwise = lambda steps, value: turn_right()
+knob.on_rotate_clockwise = lambda steps, value: turn_right()
+knob.on_rotate_counter_clockwise = lambda steps, value: turn_left()
 
 while True:
     knob.update()

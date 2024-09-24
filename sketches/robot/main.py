@@ -13,7 +13,6 @@ except ImportError as e:
     print("ImportError: ModulinoPixels not installed")
     sys.exit(-1)
 
-LIVES = 8
 VELOCITY = 13  # cm/s (max is 13cm/s)
 ANGULAR_VELOCITY = 320  # (max 320.8988764044944)
 
@@ -41,14 +40,14 @@ lifState = 0        # 0 = down, 1 = up
 
 def receiveAndExecuteFromEspNow():
     global lifState
-    host, msg = e.recv(
+    _, msg = e.recv(
         timeout_ms=0
     )  # TODO: See ESPNow.irecv() for a memory-friendly alternative.
     if msg is None:
         return
-    if len(msg) < 6:  # discard garbage
+    if len(msg) < 1:  # discard garbage
         return
-    unpacked_message = struct.unpack("BHH", msg)
+    unpacked_message = struct.unpack("B", msg)
     msg_type = unpacked_message[0]
     if int(msg_type) == STOP:
         a.drive(0, 0)
@@ -67,6 +66,8 @@ def receiveAndExecuteFromEspNow():
         else:
             liftDown()
             lifState = 0
+    else:
+      print("unknown command type ", msg_type)
 
 def liftUp():
     a.set_servo_positions(180, 0)
@@ -91,118 +92,57 @@ def liftDown():
     a.set_servo_positions(180, 0)
 
 
-def lostLifeAnimation():
-    a.drive(0, 0)
+def showReadyToPlayAnimation():
+    for _ in range(2):
+        pixels.set_all_color(ModulinoColor.GREEN, 15)
+        pixels.show()
+        sleep_ms(250)
+        pixels.clear_all()
+        pixels.show()
+        sleep_ms(250)
 
-    for i in range(3):
-        a.left_led.set_color(1, 0, 0)
-        a.right_led.set_color(1, 0, 0)
-        sleep_ms(200)
-        a.left_led.set_color(0, 0, 0)
-        a.right_led.set_color(0, 0, 0)
-        sleep_ms(200)
-
-    pixels.clear_all()
-    color = ModulinoColor.RED
-    if LIVES >= 6:
-        color = ModulinoColor.GREEN
-    elif LIVES >= 3 and LIVES < 6:
-        color = ModulinoColor(255, 156, 0)
-    else:
-        color = ModulinoColor.RED
-    pixels.set_range_color(0, LIVES - 1, color, 70)
+    pixels.set_all_color(ModulinoColor.GREEN, 15)
     pixels.show()
 
 
-def checkModulinoPixels():
-    ok_pixel = False
-    retries = 3
-    for x in range(retries):
-        if pixels.connected:
-            ok_pixel = True
-            break
-        else:
-            a.left_led.set_color(1, 0, 0)
-            a.right_led.set_color(1, 0, 0)
-            sleep_ms(500)
-    return ok_pixel
-
-
 def showEndAnimation():
-    for j in range(0, 3):
-        for i in range(0, 8):
-            pixels.clear_all()
-            pixels.set_rgb(i, 255, 0, 0, 100)
-            pixels.show()
-            sleep_ms(50)
+    for i in range(0, 8):
+        pixels.clear_all()
+        pixels.set_rgb(i, 255, 0, 0, 15)
+        pixels.show()
+        sleep_ms(50)
 
-        for i in range(7, -1, -1):
-            pixels.clear_all()
-            pixels.set_rgb(i, 255, 0, 0, 100)
-            pixels.show()
-            sleep_ms(50)
+    for i in range(7, -1, -1):
+        pixels.clear_all()
+        pixels.set_rgb(i, 255, 0, 0, 15)
+        pixels.show()
+        sleep_ms(50)
 
 
 STATE_INIT = 0
 STATE_PLAY = 1
-STATE_LOOSE_LIFE = 2
-STATE_END = 3
-STATE_ERROR = -1
+STATE_END = 2
 
 state = STATE_INIT
 
 while True:
     if state == STATE_INIT:
-        if checkModulinoPixels():
+        a.drive(0, 0)
+        showEndAnimation()
+        if a.get_color_label() is not "BLACK":
+            showReadyToPlayAnimation()
             state = STATE_PLAY
-        else:
-            state = STATE_ERROR
 
     elif state == STATE_PLAY:
-        print("PLAY")
+        receiveAndExecuteFromEspNow()
         color = a.get_color_label()
-        print(color)
-
         if color == "BLACK":
-            LIVES -= 1
-            lostLifeAnimation()
-            if LIVES > 0:
-                state = STATE_LOOSE_LIFE
-            elif LIVES == 0:
-                state = STATE_END
-
+            state = STATE_INIT
         elif color == "RED":
             # random spin
             a.rotate(
                 random.choice([30.0, 45.0, 90.0, 130.0, 150.0, 180.0, 275.0, 360.0]),
                 "deg",
-            )
+        )
 
-        receiveAndExecuteFromEspNow()
-
-    elif state == STATE_LOOSE_LIFE:
-        print("LOOSE LIFE")
-
-        receiveAndExecuteFromEspNow()
-
-        if a.get_color_label() is not "BLACK":
-            state = STATE_PLAY
-        else:
-            state = STATE_LOOSE_LIFE
-
-    elif state == STATE_END:
-        a.drive(0, 0)
-        showEndAnimation()
-
-    elif state == STATE_ERROR:
-        a.drive(0, 0)
-        while True:
-            # Blink the LEDs forever
-            a.left_led.set_color(1, 0, 0)
-            a.right_led.set_color(1, 0, 0)
-            sleep_ms(200)
-            a.left_led.set_color(0, 0, 0)
-            a.right_led.set_color(0, 0, 0)
-            sleep_ms(200)
-
-    sleep_ms(100)
+    sleep_ms(50)
