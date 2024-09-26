@@ -43,7 +43,9 @@ robot-patch-firmware:
 robot-patch-mpy:
 	rm -rf arduino-alvik-mpy
 	git clone git@github.com:arduino/arduino-alvik-mpy.git
-	cd arduino-alvik-mpy && git checkout 48db6a3d26c798b4be06fa6e71de005901f716fc
+	# Use the commit with `1.0.4 - default servo 90` that move the servo to 90 degrees by default and not 0.
+	# See https://github.com/arduino/arduino-alvik-mpy/commit/177c43620b08ee6f66fac4d11839564eebddbd88
+	cd arduino-alvik-mpy && git checkout 177c43620b08ee6f66fac4d11839564eebddbd88
 
 	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/__init__.py :lib/arduino_alvik/__init__.py
 	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/arduino_alvik.py :lib/arduino_alvik/arduino_alvik.py
