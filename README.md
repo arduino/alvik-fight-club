@@ -24,7 +24,22 @@ The project is composed by two components:
 6. Copy the printed MAC address
 7. `make robot-upload` to upload the code into the alvik
 
-NOTE: the PATCH steps `2` and `3` are no more necessary when the [Arduino_AlvikCarrier](https://github.com/arduino-libraries/Arduino_AlvikCarrier) and the [Arduino-Alvik-mpy](https://github.com/arduino/arduino-alvik-mpy) are merged to master and release ad an official release.
+NOTE: the PATCH steps `2` and `3` are no more necessary when the [Arduino_AlvikCarrier](https://github.com/arduino-libraries/Arduino_AlvikCarrier) and the [Arduino-Alvik-mpy](https://github.com/arduino/arduino-alvik-mpy) are merged to master and released.
+
+#### Color calibration mode
+The robot exposes a `color calibration mode` that can be activated by pressing the `ok` button.
+The robot guides the calibration using different lights code showed on the Modulino Pixels.
+The user must move the robot on WHITE and BLACK color surfaces when a specific lights code is shown.
+
+Steps to calibrate the robot
+0. Prepare a WHITE and BLACK surface
+1. Switch on the robot
+2. Press the `ok` button to enter into the `calibration mode`. The mode has the following light codes
+   - WHITE leds countdown: indicate that the robot must be put on WHITE color. At the end of the countdown, the robot calibrates the WHITE color.
+   - GREEN leds for 2 seconds: white calibration terminated
+   - BLUE leds countdown: indicate that the robot must be put on BLACK color. At the end of the countdown, the robot calibrates the BLACK color
+   - GREEN leds for 2 seconds: black calibration terminated.
+   - the robot automatically reset itself.
 
 ### Configure the controller
 1. Connect the controller
