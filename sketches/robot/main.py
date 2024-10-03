@@ -14,8 +14,8 @@ except ImportError as e:
     print("ImportError: ModulinoPixels not installed")
     sys.exit(-1)
 
-VELOCITY = 13  # cm/s (max is 13cm/s)
-ANGULAR_VELOCITY = 250  # (max 320.8988764044944)
+LINEAR_VELOCITY = 10    # (max 13cm/s)
+ANGULAR_VELOCITY = 75  # (max 320.8988764044944)
 FREEZE_FOR_SECONDS = 5
 REVERT_CONTROLLER_FOR_SECONDS = 10
 
@@ -43,9 +43,12 @@ LIFT = 5
 isPlayingReverted = False  # if true the controller action are reverted
 lifState = 0  # 0 = down, 1 = up
 
-
+lin = 0
+ang = 0
 def receiveAndExecuteFromEspNow():
     global lifState
+    global lin
+    global ang
     _, msg = e.recv(
         timeout_ms=0
     )  # TODO: See ESPNow.irecv() for a memory-friendly alternative.
@@ -55,18 +58,19 @@ def receiveAndExecuteFromEspNow():
         return
     unpacked_message = struct.unpack("B", msg)
     msg_type = unpacked_message[0]
+
     if int(msg_type) == STOP:
-        a.drive(0, 0)
+        lin, ang = 0, 0
     elif int(msg_type) == GO_FORWARD:
-        v = VELOCITY if isPlayingReverted else -VELOCITY
-        a.drive(v, 0)
+        lin = LINEAR_VELOCITY if isPlayingReverted else -LINEAR_VELOCITY
+        ang = 0
     elif int(msg_type) == GO_BACKWARD:
-        v = -VELOCITY if isPlayingReverted else VELOCITY
-        a.drive(v, 0)
+        lin = -LINEAR_VELOCITY if isPlayingReverted else LINEAR_VELOCITY
+        ang = 0
     elif int(msg_type) == TURN_LEFT:
-        a.drive(0, ANGULAR_VELOCITY)
+        ang = -ANGULAR_VELOCITY if isPlayingReverted else ANGULAR_VELOCITY
     elif int(msg_type) == TURN_RIGHT:
-        a.drive(0, -ANGULAR_VELOCITY)
+        ang = ANGULAR_VELOCITY if isPlayingReverted else -ANGULAR_VELOCITY
     elif int(msg_type) == LIFT:
         if lifState == 0:
             liftUp()
@@ -77,6 +81,7 @@ def receiveAndExecuteFromEspNow():
     else:
         print("unknown command type ", msg_type)
 
+    a.drive(lin, ang)
 
 def liftUp():
     a.set_servo_positions(180, 0)

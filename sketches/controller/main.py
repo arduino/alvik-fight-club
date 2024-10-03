@@ -2,8 +2,10 @@ import network
 import espnow
 import struct
 import sys
+from time import sleep
 
 from modulino import ModulinoKnob, ModulinoButtons
+
 
 ALVIK_MAC = "74:4d:bd:a2:08:74"
 
@@ -73,9 +75,11 @@ buttons.on_button_b_press = lambda: stop()
 buttons.on_button_c_press = lambda: go_backward()
 
 knob.on_press = lambda: lift()
-knob.on_rotate_clockwise = lambda steps, value: turn_right()
-knob.on_rotate_counter_clockwise = lambda steps, value: turn_left()
+knob.on_rotate_clockwise = lambda _, __: turn_right()
+knob.on_rotate_counter_clockwise = lambda _, __: turn_left()
 
 while True:
     knob.update()
     buttons.update()
+
+    sleep(0.1)
