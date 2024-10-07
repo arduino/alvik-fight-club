@@ -20,11 +20,17 @@ controller-upload:
 
 .PHONY: robot-install
 robot-install:
-	mpremote mip install github:arduino/arduino-modulino-mpy
+	mpremote mip install github:arduino/arduino-modulino-mpy github:arduino/ucPack-mpy
 
 .PHONY: robot-get-mac
 robot-get-mac:
 	mpremote exec "import network; print(':'.join('{:02x}'.format(x) for x in network.WLAN().config('mac')))"
+
+
+.PHONY: robot-get-charge
+robot-get-charge:
+	mpremote exec "from arduino_alvik import ArduinoAlvik; a = ArduinoAlvik(); a.begin(); print(a.get_battery_charge())"
+
 
 .PHONY: robot-upload
 robot-upload:
@@ -43,10 +49,11 @@ robot-patch-firmware:
 robot-patch-mpy:
 	rm -rf arduino-alvik-mpy
 	git clone git@github.com:arduino/arduino-alvik-mpy.git
-	# Use the commit with `1.0.4 - default servo 90` that move the servo to 90 degrees by default and not 0.
+	# See issue: https://github.com/bcmi-labs/alvik-fight-club/issues/38
 	# See https://github.com/arduino/arduino-alvik-mpy/commit/177c43620b08ee6f66fac4d11839564eebddbd88
 	cd arduino-alvik-mpy && git checkout 177c43620b08ee6f66fac4d11839564eebddbd88
 
+	mpremote fs mkdir lib/arduino_alvik || true
 	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/__init__.py :lib/arduino_alvik/__init__.py
 	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/arduino_alvik.py :lib/arduino_alvik/arduino_alvik.py
 	mpremote fs cp ./arduino-alvik-mpy/arduino_alvik/constants.py :lib/arduino_alvik/constants.py

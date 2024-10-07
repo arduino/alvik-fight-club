@@ -16,15 +16,26 @@ The project is composed by two components:
 - `make init` to install tools on local pc
 
 ### Configure the Alvik robot
-1. Connect the Alvik
-2. `make robot-patch-firmware`: to patch the firmware running on the STM32 (needed to resolve [Issue 10](https://github.com/bcmi-labs/alvik-fight-club/issues/10))
-3. `make robot-patch-mpy`: to install the `dev` branch with of the Arduino-Alvik-mpy (Needed to resolve [Issue 10](https://github.com/bcmi-labs/alvik-fight-club/issues/10))
+1. Connect the usb-c to the Alvik and turn on it
+2. `make robot-patch-firmware`: to upload the patched firmware running on the STM32 (needed to resolve [Issue 10](https://github.com/bcmi-labs/alvik-fight-club/issues/10))
+3. `make robot-patch-mpy`: to install the `dev` branch of the arduino-alvik-mpy code in the robot (needed to resolve [Issue 10](https://github.com/bcmi-labs/alvik-fight-club/issues/10)) and [Issue 38](https://github.com/bcmi-labs/alvik-fight-club/issues/38).
 4. `make robot-install` to upload the `Modulino` lib
-5. `make robot-get-mac` to get the `MAC` address and print it into the consle.
-6. Copy the printed MAC address
-7. `make robot-upload` to upload the code into the alvik
+5. `make robot-upload` to upload the code into the alvik
+6. check if the robot is: shows red leds animation on black surface, and steady green leds on white surface.
+7. `make robot-get-mac` to get the `MAC` address and print it into the console
+8. Copy the printed MAC address
 
-NOTE: the PATCH steps `2` and `3` are no more necessary when the [Arduino_AlvikCarrier](https://github.com/arduino-libraries/Arduino_AlvikCarrier) and the [Arduino-Alvik-mpy](https://github.com/arduino/arduino-alvik-mpy) are merged to master and released.
+Wiring
+- right motor connected to upper pin
+- left motor connected to lower pin
+
+MAC of Robots (Maker Fair Rome 2024):
+- Livia robot: `74:4d:bd:a2:08:74` previous mac was `74:4d:bd:7e:28:70`
+- Stefano robot `74:4d:bd:a2:1b:bc`
+- Davide robot: `74:4d:bd:a2:27:08`
+- Alessia robot:`dc:da:0c:22:eb:94`
+
+NOTE: the PATCH steps `2` and `3` are no more necessary when the [Arduino_AlvikCarrier](https://github.com/arduino-libraries/Arduino_AlvikCarrier) and the [Arduino-Alvik-mpy](https://github.com/arduino/arduino-alvik-mpy) are merged to master
 
 #### Color calibration mode
 The robot exposes a `color calibration mode` that can be activated by pressing the `ok` button.
@@ -47,7 +58,7 @@ Steps to calibrate the robot
    - Download the [Micropython Installer](https://labs.arduino.cc/en/labs/micropython-installer)
    - Open the installer and clik  `Install Micropython` button
 4. `make controller-install` to install libraries into the controller
-5. `make controller-upload robot-mac=<PUT_THE_ALVIK_MAC_HERE>` to upload the code and setting the MAC sddress obtained with the `make robot-get-mac` (robot Step 5).
+5. `make controller-upload robot-mac=<PUT_THE_ALVIK_MAC_HERE>` to upload the code and setting the MAC address obtained with the `make robot-get-mac` (robot Step 5).
        Example: `make controller-upload robot-mac=74:4d:bd:a0:49:e8`
 
 ## Techninal info
