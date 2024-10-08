@@ -291,6 +291,8 @@ while True:
                 a.drive(0, 0)
                 showFreezeAnimation()
                 showReadyToPlayLeds()
+                while a.get_color_label() == "BLUE" or a.get_color_label() == "LIGHT BLUE":
+                    receiveAndExecuteFromEspNow()
             elif color == "GREEN" or color == "LIGHT GREEN":
                 if not isPlayingReverted:
                     deadline = ticks_add(
