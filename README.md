@@ -59,6 +59,14 @@ Steps to calibrate the robot
 5. `make controller-upload robot-mac=<PUT_THE_ALVIK_MAC_HERE>` to upload the code and setting the MAC address obtained with the `make robot-get-mac` (Step 7 of Configure the Alvik robot).
        Example: `make controller-upload robot-mac=74:4d:bd:a0:49:e8`
 
+
+### Arena
+The arena is anything with a black border (at least 15cm)
+
+<p align="center">
+  <img src="img/arena.pdf" width="60%">
+</p>
+
 ## Techninal info
 
 ###  Remote controller
