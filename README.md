@@ -17,8 +17,8 @@ The project is composed by two components:
 
 ### Configure the Alvik robot
 1. Connect the usb-c to the Alvik and turn on it
-2. `make robot-patch-firmware`: to upload the patched firmware running on the STM32 (needed to resolve [Issue 10](https://github.com/bcmi-labs/alvik-fight-club/issues/10))
-3. `make robot-patch-mpy`: to install the `dev` branch of the arduino-alvik-mpy code in the robot (needed to resolve [Issue 10](https://github.com/bcmi-labs/alvik-fight-club/issues/10)) and [Issue 38](https://github.com/bcmi-labs/alvik-fight-club/issues/38).
+2. `make robot-patch-firmware`: to upload the patched firmware running on the STM32 (needed to resolve [Issue 2](https://github.com/arduino/alvik-fight-club/issues/2))
+3. `make robot-patch-mpy`: to install the `dev` branch of the arduino-alvik-mpy code in the robot (needed to resolve [Issue 2](https://github.com/arduino/alvik-fight-club/issues/2)) and [Issue 3](https://github.com/arduino/alvik-fight-club/issues/3).
 4. `make robot-install` to upload the `Modulino` lib
 5. `make robot-upload` to upload the code into the alvik
 6. check if the robot is: shows red leds animation on black surface, and steady green leds on white surface.
